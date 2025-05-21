@@ -338,7 +338,7 @@ namespace FractalsExplorerCUDA
 				   type == typeof(ulong) ? ulong.MaxValue :
 				   type == typeof(float) ? decimal.MaxValue :
 				   type == typeof(double) ? decimal.MaxValue :
-				   type == typeof(decimal) ? decimal.MaxValue : 0;
+				   type == typeof(decimal) ? decimal.MaxValue : long.MaxValue;
 
 		private decimal GetDefaultValue(string argName, Type argType)
 		{

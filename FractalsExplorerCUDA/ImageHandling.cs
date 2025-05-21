@@ -84,8 +84,11 @@ namespace FractalsExplorerCUDA
                         this.ViewPBox.Width = (int) (this.CurrentImage.Width * this.zoomFactor);
                         this.ViewPBox.Height = (int) (this.CurrentImage.Height * this.zoomFactor);
                         this.ViewPBox.SizeMode = PictureBoxSizeMode.Zoom;
-                    }
-                    else
+
+						// Update meta label
+                        this.MetaLabel.Text = this.CurrentObject?.GetMetaString() ?? "No image selected";
+					}
+					else
                     {
                         this.ViewPBox.Image = null;
                     }
@@ -99,7 +102,7 @@ namespace FractalsExplorerCUDA
             this.ViewPBox.MouseUp += this.ViewPBox_MouseUp;*/
 
             // Register ZoomNumeric event
-            //this.ZoomNumeric.ValueChanged += this.ZoomNumeric_ValueChanged;
+            this.ZoomNumeric.ValueChanged += this.ZoomNumeric_ValueChanged;
 
             // Load resources images
             this.LoadResourcesImages(32);
@@ -215,11 +218,7 @@ namespace FractalsExplorerCUDA
 			// Events von alter ViewPBox entfernen
 			if (this.ViewPBox != null)
 			{
-				this.ViewPBox.MouseWheel -= this.ViewPBox_MouseWheel;
-				this.ViewPBox.MouseDown -= this.ViewPBox_MouseDown;
-				this.ViewPBox.MouseMove -= this.ViewPBox_MouseMove;
-				this.ViewPBox.MouseUp -= this.ViewPBox_MouseUp;
-				this.ViewPBox.DoubleClick -= (s, e) => this.ImportImage();
+				// null
 			}
 
 			// Neue ViewPBox setzen
@@ -642,7 +641,7 @@ namespace FractalsExplorerCUDA
         public long Size => this.Width * this.Height * this.BitsPerPixel / 8;
 
         public bool OnHost => this.Img != null && this.Pointer == 0;
-        public bool OnDevice => this.Img == null && this.Pointer != 0;
+        public bool OnDevice => this.Img?.Width < 2 && this.Pointer != 0;
 
 
         // ----- ----- CONSTRUCTOR ----- ----- \\

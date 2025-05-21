@@ -24,7 +24,7 @@ namespace FractalsExplorerCUDA
 		private Dictionary<string, object> currentOverlayArgs = [];
 		private bool ctrlKeyPressed;
 		private bool kernelExecutionRequired;
-		private Single mandelbrotZoomFactor;
+		private float mandelbrotZoomFactor = 1;
 		private Stopwatch? stopwatch;
 
 		// ----- ----- ----- CONSTRUCTORS ----- ----- ----- \\
@@ -54,7 +54,8 @@ namespace FractalsExplorerCUDA
 			this.pictureBox_view.MouseMove += this.pictureBox_view_MouseMove;
 			this.pictureBox_view.MouseUp += this.pictureBox_view_MouseUp;
 			this.pictureBox_view.MouseWheel += this.pictureBox_view_MouseWheel;
-			this.pictureBox_view.Paint += this.PictureBox_view_Paint;
+			this.pictureBox_view.Paint += (s, e) => this.PictureBox_view_Paint(s, e);
+			this.listBox_images.DoubleClick += (s, e) => this.MoveImage(this.listBox_images.SelectedIndex, true);
 
 			// Select first device if available & toggle dark mode on
 			if (this.comboBox_devices.Items.Count > 0)
@@ -192,7 +193,7 @@ namespace FractalsExplorerCUDA
 			}
 
 			// Get arguments
-			this.GUIB.BuildPanel(0.48f, true);
+			this.GUIB.BuildPanel(0.48f, !this.checkBox_invariables.Checked);
 
 		}
 
@@ -280,7 +281,7 @@ namespace FractalsExplorerCUDA
 			}
 
 			// Refill list
-			this.IMGH.FillImagesListBox();
+			this.IMGH.FitZoom();
 		}
 
 
@@ -430,7 +431,7 @@ namespace FractalsExplorerCUDA
 			}
 		}
 
-		private void PictureBox_view_Paint(object? sender, PaintEventArgs e)
+		private void PictureBox_view_Paint(object sender, PaintEventArgs e)
 		{
 			PictureBox? pbox = sender as PictureBox;
 			if (pbox == null)
@@ -445,13 +446,13 @@ namespace FractalsExplorerCUDA
 			}
 
 			// Overlay nur zeichnen, wenn MandelbrotMode aktiv ist und Overlay-Daten vorhanden sind
-			if (currentOverlayArgs != null && currentOverlayArgs.Count > 0)
+			if (this.currentOverlayArgs != null && this.currentOverlayArgs.Count > 0)
 			{
 				// Overlay erstellen - Größe auf PictureBox-Größe oder nach Wunsch
 				Size overlaySize = new Size(pbox.Width / 8, pbox.Height / 8);
 
 				// Overlay vom GuiBuilder holen (erwartet: CreateOverlayBitmap(Size, Dictionary, ...))
-				Bitmap overlay = this.GUIB.CreateOverlayBitmap(overlaySize, currentOverlayArgs, fontSize: 12, color: Color.White, imageSize: pbox.Size);
+				Bitmap overlay = this.GUIB.CreateOverlayBitmap(overlaySize, this.currentOverlayArgs, fontSize: 12, color: Color.White, imageSize: pbox.Size);
 
 				// Overlay transparent zeichnen an gewünschter Position (z.B. oben links)
 				e.Graphics.DrawImageUnscaled(overlay, new Point(10, 10));
@@ -538,11 +539,21 @@ namespace FractalsExplorerCUDA
 			numeric.Value = newValue;
 		}
 
+
+
+
+
+		// ----- ----- ----- EVENT HANDLERS ----- ----- ----- \\
+		private void checkBox_darkMode_CheckedChanged(object sender, EventArgs e)
+		{
+			DarkModeToggle.ToggleDarkMode(this, this.checkBox_darkMode.Checked);
+		}
+
 		private void fullScreen_DoubleClick(object? sender, EventArgs e)
 		{
 			if (this.fullScreenForm != null)
 			{
-				// Bereits aktiv, also schließen
+				// Bereits aktiv, schließen
 				this.fullScreenForm.Close();
 				this.fullScreenForm = null;
 				return;
@@ -578,6 +589,7 @@ namespace FractalsExplorerCUDA
 
 
 			this.fullScreenForm.Controls.Add(pb);
+			this.IMGH.SetPictureBox(pb);
 
 			// ESC beenden
 			this.fullScreenForm.KeyDown += (s, args) =>
@@ -586,6 +598,8 @@ namespace FractalsExplorerCUDA
 				{
 					this.fullScreenForm?.Close();
 					this.fullScreenForm = null;
+
+					//this.IMGH.SetPictureBox(this.pictureBox_view);
 				}
 			};
 
@@ -594,12 +608,19 @@ namespace FractalsExplorerCUDA
 			this.fullScreenForm.Focus(); // wichtig für ESC
 		}
 
-
-
-		// ----- ----- ----- EVENT HANDLERS ----- ----- ----- \\
-		private void checkBox_darkMode_CheckedChanged(object sender, EventArgs e)
+		private void checkBox_crosshair_CheckedChanged(object sender, EventArgs e)
 		{
-			DarkModeToggle.ToggleDarkMode(this, this.checkBox_darkMode.Checked);
+			// Toggle crosshair in picturebox
+			if (this.checkBox_crosshair.Checked)
+			{
+				this.IMGH.ShowCrosshair = true;
+			}
+			else
+			{
+				this.IMGH.ShowCrosshair = false;
+			}
+
+			this.pictureBox_view.Invalidate();
 		}
 
 		private void button_exec_Click(object? sender, EventArgs e)
@@ -626,9 +647,25 @@ namespace FractalsExplorerCUDA
 
 		}
 
-		private void button_export_Click(object sender, EventArgs e)
+		private async void button_export_Click(object sender, EventArgs e)
 		{
+			if (this.REC.CachedImages.Count == 0)
+			{
+				if (this.IMGH.CurrentObject == null)
+				{
+					MessageBox.Show("No image to export", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					return;
+				}
 
+				this.IMGH.CurrentObject.Export();
+				return;
+			}
+
+			string result = await this.REC.CreateGifAsync("", "", (int) this.numericUpDown_fps.Value, true, null);
+
+			MessageBox.Show("Exported GIF to: " + result, "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
 		}
+
+		
 	}
 }

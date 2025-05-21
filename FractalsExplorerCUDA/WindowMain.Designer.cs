@@ -44,7 +44,13 @@
 			this.button_import = new Button();
 			this.button_export = new Button();
 			this.listBox_images = new ListBox();
+			this.numericUpDown_fps = new NumericUpDown();
+			this.checkBox_crosshair = new CheckBox();
+			this.panel_view = new Panel();
+			this.checkBox_invariables = new CheckBox();
 			((System.ComponentModel.ISupportInitialize) this.pictureBox_view).BeginInit();
+			((System.ComponentModel.ISupportInitialize) this.numericUpDown_fps).BeginInit();
+			this.panel_view.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// listBox_log
@@ -122,9 +128,9 @@
 			// 
 			// pictureBox_view
 			// 
-			this.pictureBox_view.Location = new Point(12, 59);
+			this.pictureBox_view.Location = new Point(24, 21);
 			this.pictureBox_view.Name = "pictureBox_view";
-			this.pictureBox_view.Size = new Size(200, 182);
+			this.pictureBox_view.Size = new Size(152, 136);
 			this.pictureBox_view.TabIndex = 8;
 			this.pictureBox_view.TabStop = false;
 			// 
@@ -158,7 +164,7 @@
 			// 
 			// button_create
 			// 
-			this.button_create.Location = new Point(358, 278);
+			this.button_create.Location = new Point(358, 250);
 			this.button_create.Name = "button_create";
 			this.button_create.Size = new Size(60, 23);
 			this.button_create.TabIndex = 12;
@@ -195,11 +201,54 @@
 			this.listBox_images.Size = new Size(134, 64);
 			this.listBox_images.TabIndex = 15;
 			// 
+			// numericUpDown_fps
+			// 
+			this.numericUpDown_fps.Location = new Point(358, 278);
+			this.numericUpDown_fps.Maximum = new decimal(new int[] { 144, 0, 0, 0 });
+			this.numericUpDown_fps.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+			this.numericUpDown_fps.Name = "numericUpDown_fps";
+			this.numericUpDown_fps.Size = new Size(60, 23);
+			this.numericUpDown_fps.TabIndex = 16;
+			this.numericUpDown_fps.Value = new decimal(new int[] { 10, 0, 0, 0 });
+			// 
+			// checkBox_crosshair
+			// 
+			this.checkBox_crosshair.AutoSize = true;
+			this.checkBox_crosshair.Location = new Point(319, 452);
+			this.checkBox_crosshair.Name = "checkBox_crosshair";
+			this.checkBox_crosshair.Size = new Size(75, 19);
+			this.checkBox_crosshair.TabIndex = 17;
+			this.checkBox_crosshair.Text = "Crosshair";
+			this.checkBox_crosshair.UseVisualStyleBackColor = true;
+			this.checkBox_crosshair.CheckedChanged += this.checkBox_crosshair_CheckedChanged;
+			// 
+			// panel_view
+			// 
+			this.panel_view.Controls.Add(this.pictureBox_view);
+			this.panel_view.Location = new Point(12, 59);
+			this.panel_view.Name = "panel_view";
+			this.panel_view.Size = new Size(200, 182);
+			this.panel_view.TabIndex = 18;
+			// 
+			// checkBox_invariables
+			// 
+			this.checkBox_invariables.AutoSize = true;
+			this.checkBox_invariables.Location = new Point(218, 452);
+			this.checkBox_invariables.Name = "checkBox_invariables";
+			this.checkBox_invariables.Size = new Size(114, 19);
+			this.checkBox_invariables.TabIndex = 19;
+			this.checkBox_invariables.Text = "Show invariables";
+			this.checkBox_invariables.UseVisualStyleBackColor = true;
+			// 
 			// WindowMain
 			// 
 			this.AutoScaleDimensions = new SizeF(7F, 15F);
 			this.AutoScaleMode = AutoScaleMode.Font;
 			this.ClientSize = new Size(496, 473);
+			this.Controls.Add(this.checkBox_invariables);
+			this.Controls.Add(this.panel_view);
+			this.Controls.Add(this.checkBox_crosshair);
+			this.Controls.Add(this.numericUpDown_fps);
 			this.Controls.Add(this.listBox_images);
 			this.Controls.Add(this.button_export);
 			this.Controls.Add(this.button_import);
@@ -207,7 +256,6 @@
 			this.Controls.Add(this.checkBox_record);
 			this.Controls.Add(this.label_meta);
 			this.Controls.Add(this.label_cached);
-			this.Controls.Add(this.pictureBox_view);
 			this.Controls.Add(this.checkBox_silent);
 			this.Controls.Add(this.checkBox_darkMode);
 			this.Controls.Add(this.panel_kernelArgs);
@@ -219,6 +267,8 @@
 			this.Name = "WindowMain";
 			this.Text = "Fractals Explorer using CUDA";
 			((System.ComponentModel.ISupportInitialize) this.pictureBox_view).EndInit();
+			((System.ComponentModel.ISupportInitialize) this.numericUpDown_fps).EndInit();
+			this.panel_view.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 		}
@@ -241,5 +291,9 @@
 		private Button button_import;
 		private Button button_export;
 		private ListBox listBox_images;
+		private NumericUpDown numericUpDown_fps;
+		private CheckBox checkBox_crosshair;
+		private Panel panel_view;
+		private CheckBox checkBox_invariables;
 	}
 }
