@@ -639,12 +639,12 @@ namespace FractalsExplorerCUDA
 
 		private void button_create_Click(object sender, EventArgs e)
 		{
-
+			this.IMGH.CreateEmpty(Color.Black, new Size(Screen.PrimaryScreen?.Bounds.Width ?? 0, Screen.PrimaryScreen?.Bounds.Height ?? 0), "Fullscreen_");
 		}
 
 		private void button_import_Click(object sender, EventArgs e)
 		{
-
+			this.IMGH.ImportImage();
 		}
 
 		private async void button_export_Click(object sender, EventArgs e)
